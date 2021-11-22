@@ -69,25 +69,35 @@
     </form>
 
     <section id="error-btns">
-      <button>Console Log</button>
-      <button>Console Error</button>
-      <button>Console Count</button>
-      <button>Console Warn</button>
-      <button>Console Assert</button>
-      <button>Console Clear</button>
-      <button>Console Dir</button>
-      <button>Console dirxml</button>
-      <button>Console Group Start</button>
-      <button>Console Group End</button>
-      <button>Console Table</button>
-      <button>Start Timer</button>
-      <button>End Timer</button>
-      <button>Console Trace</button>
-      <button>Trigger a Global Error</button>
+      <button id="log">Console Log</button>
+      <button id="error">Console Error</button>
+      <button id="count">Console Count</button>
+      <button id="warn">Console Warn</button>
+      <button id="assert">Console Assert</button>
+      <button id="clear">Console Clear</button>
+      <button id="dir">Console Dir</button>
+      <button id="dirxml">Console dirxml</button>
+      <button id="groupst">Console Group Start</button>
+      <button id="groupend">Console Group End</button>
+      <button id="table">Console Table</button>
+      <button id="stimer">Start Timer</button>
+      <button id="etimer"> End Timer</button>
+      <button id="trace">Console Trace</button>
+      <button id="gtrace">Trigger a Global Error</button>
     </section>
   </main>
-
+  <script src="https://cdn.trackjs.com/agent/v3/latest/t.js"></script>
   <script>
+    window.TrackJS && TrackJS.install({ 
+    token: "7e2d31018e3941b180e61f5440109c54"
+    // for more configuration options, see https://docs.trackjs.com
+    });
+    class NotANumberError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = "NotANumberError";
+      }
+    }
     let form = document.querySelector('form');
     form.addEventListener('submit', e => {
       e.preventDefault();
@@ -95,13 +105,108 @@
       let firstNum = document.querySelector('#first-num').value;
       let secondNum = document.querySelector('#second-num').value;
       let operator = document.querySelector('#operator').value;
-      output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      try {
+        if (isNaN(Number(firstNum))){
+          throw new Error("First input is not a number!!!!");
+        }
+        if (isNaN(Number(secondNum))) {
+          throw new NotANumberError("Second input is not a number!!!!");
+        }
+        output.innerHTML = eval(`${firstNum} ${operator} ${secondNum}`);
+      }
+      catch(err) {
+        console.error("Incorrect input: " + err)
+      }
+      finally {
+        console.log("Nice :)");
+      }
     });
 
     let errorBtns = Array.from(document.querySelectorAll('#error-btns > button'));
 
     // Start your code here
     // You may move this JS to another file if you wish
+    let log = document.querySelector('#log');
+    log.addEventListener('click', () => {console.log("Console Log Demo");});
+    let err = document.querySelector('#error');
+    err.addEventListener('click', () => {
+      console.error("Console Error Demo");
+    });
+    let count = document.querySelector('#count');
+    count.addEventListener('click', () => {
+      console.count("Count Button");
+    });
+    let warn = document.querySelector('#warn');
+    warn.addEventListener('click', () => {
+      console.warn("Warning");
+    });
+    let assert = document.querySelector('#assert');
+    assert.addEventListener('click', () => {
+      const number = 5;
+      const reason = "`number` is not even";
+      console.assert(number % 2 == 0, {number, reason});
+    });
+    let clear = document.querySelector('#clear');
+    clear.addEventListener('click', () => {
+      console.clear();
+    });
+    let dir = document.querySelector('#dir');
+    dir.addEventListener('click', () => {
+      console.dir(dir);
+    });
+    let dirxml = document.querySelector('#dirxml');
+    err.addEventListener('click', () => {
+      console.dirxml(dirxml);
+    });
+    let groupst = document.querySelector('#groupst');
+    groupst.addEventListener('click', () => {
+      console.group();
+    });
+    let groupend = document.querySelector('#groupend');
+    groupend.addEventListener('click', () => {
+      console.groupEnd();
+    });
+    let table = document.querySelector('#table');
+    table.addEventListener('click', () => {
+      console.table([
+        {
+          piece: 'Queen',
+          value: '9',
+          Note: 'The most powerful piece in the game',
+        },
+        {
+          piece: 'King',
+          value: 'Infinity',
+          Note: 'If you lose your king you die',
+        },
+        {
+          piece: 'Rook',
+          value: '5',
+        }
+      ]);
+    });
+    let stimer = document.querySelector('#stimer');
+    stimer.addEventListener('click', () => {
+        console.time("Timer button");
+    });
+    let etimer = document.querySelector('#etimer');
+    etimer.addEventListener('click', () => {
+        console.timeEnd("Timer button");
+    });
+    let trace = document.querySelector('#trace');
+    trace.addEventListener('click', () => {
+        console.trace();
+    });
+    let gtrace = document.querySelector('#gtrace');
+    gtrace.addEventListener('click', () => {
+      const DONTTOUCH = "DONTYOUDARE";
+      DONTTOUCH = "IMTOUCHINGIT";
+    });
+    window.addEventListener('error', (e) => {
+      console.log(e.message);
+    });
+
+
   </script>
 </body>
 
